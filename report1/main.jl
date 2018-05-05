@@ -77,7 +77,7 @@ function hnn_predict(weight::AbstractMatrix, test::AbstractVector, loop=1000)
             # 収束判定
             if eng_ == eng[j]
                 brk_cnt += 1
-                if brk_cnt >= loop/5
+                if brk_cnt >= 200
                     break
                 end
             else
@@ -98,7 +98,7 @@ function pat_img(pat_ar::AbstractArray, dim::Int, title::String="title")
     return imgs #パターン画像のリストを戻す
 end
 pat_img(weight::AbstractMatrix) = heatmap(weight, bar_width=false,size=(10,10), title="weight")
-out_plot(imt, imi, imo, ind::Int=1) = plot(imt[ind],imi[ind], imo[ind], layout=(1,3))
+out_plot(imt, imi, imo, ind::Int=1) = plot(imt[ind],imi[ind], imo[ind], layout=(1,3),size=(600,200))
 
 function HopfieldNet(pats::AbstractVector, noise_ratio::AbstractFloat)
     weight = hnn_learning(pats)
@@ -186,20 +186,25 @@ function many_noise()
         weight, imgs_train, imgs_in, imgs_out, tf_cnt = hnn_eval(pats4, nz/10)
         tfs4[nz+1] += mean(tf_cnt)
     end
-    return tfs2, tfs4
-    plot(noises,tfs2, label="two type memorized")
-    plot!(noises,tfs4, label="four type memorized")
+    return tfs2, tfs4, noises
 end
 
 # main routine
 imt, imi, imo = @time remember()
 tfs = @time many_pats()
-tfs2, tfs4 = @time many_noise()
-out_plot(imt[1], imi[1], imo[1])
-out_plot(imt[2], imi[2], imo[2])
-out_plot(imt[3], imi[3], imo[3])
-out_plot(imt[4], imi[4], imo[4])
-out_plot(imt[5], imi[5], imo[5])
-plot(tfs)
-plot(tfs2)
-plot!(tfs4)
+tfs2, tfs4, noises = @time many_noise()
+out1 = out_plot(imt[1], imi[1], imo[1])
+savefig("out1.png")
+out2 = out_plot(imt[2], imi[2], imo[2])
+savefig("out2.png")
+out3 = out_plot(imt[3], imi[3], imo[3])
+savefig("out3.png")
+out4 = out_plot(imt[4], imi[4], imo[4])
+savefig("out4.png")
+out5 = out_plot(imt[5], imi[5], imo[5])
+savefig("out5.png")
+out6 = plot(tfs)
+savefig("out6.png")
+plot(noises,tfs2, label="two type memorized")
+out7 = plot!(noises,tfs4, label="four type memorized")
+savefig("out7.png")
