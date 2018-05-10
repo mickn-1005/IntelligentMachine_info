@@ -24,9 +24,7 @@ function sgn(x::AbstractFloat)
 end
 
 # ネットワークエネルギー関数
-function lyapnov(w::AbstractMatrix,xr::AbstractVector)
-    return xr' * w * xr + sum(theta * xr)
-end
+lyapnov(w::AbstractMatrix,xr::AbstractVector) = xr' * w * xr + sum(theta * xr)
 
 # ノイズ生成関数
 function pat_noise_mk(pat_ar::AbstractArray, ratio::AbstractFloat)
@@ -55,7 +53,7 @@ function hnn_learning(pat_ar::AbstractVector)
     neusize = imgdim^2
     weight = zeros(neusize, neusize)  #重み行列の初期化
     Q = size(pat_ar)[1]
-    weight += sum(pat*transpose(pat) for pat in pat_ar)/Q
+    weight = sum(pat*transpose(pat) for pat in pat_ar)/Q
     for i in 1:neusize
         weight[i,i] = 0.
     end
@@ -160,7 +158,6 @@ function remember()
     return imt, imi, imo, weight
 end
 
-
 function many_pats()
     println("memorize many patterns...")
     pat_size = [1,2,3,4,5,6,7]
@@ -207,29 +204,28 @@ function many_noise()
 end
 
 # main routine
-# imt, imi, imo, weight = @time remember()
-# tfs = @time many_pats()
-# tfs2, tfs4, noises, anti2, anti4 = @time many_noise()
-# out_plot(imt[1], imi[1], imo[1])
-# savefig("out1.png")
-# out_plot(imt[2], imi[2], imo[2])
-# savefig("out2.png")
-# out_plot(imt[3], imi[3], imo[3])
-# savefig("out3.png")
-# out_plot(imt[4], imi[4], imo[4])
-# savefig("out4.png")
-# out_plot(imt[5], imi[5], imo[5])
-# savefig("out5.png")
-# pat_img(weight)
-# savefig("weight.png")
-# plot(tfs,xlabel="No. of patterns", ylabel="accuracy[%]",ylims=[0,100])
-# savefig("out6.png")
-# plot(noises,tfs2, label="two type memorized",xlabel="noise ratio", ylabel="accuracy[%]")
-# plot!(noises,tfs4, label="four type memorized")
-# savefig("out7.png")
-#
-# plot(noises,tfs2, label="2-true pattern",xlabel="noise ratio", ylabel="accuracy[%]")
-# plot!(noises,tfs4, label="4-true pattern")
-# plot!(noises,anti2, label="2-anti pattern")
-# plot!(noises,anti4, label="4-anti pattern")
-# savefig("out8.png")
+imt, imi, imo, weight = @time remember()
+tfs = @time many_pats()
+tfs2, tfs4, noises, anti2, anti4 = @time many_noise()
+out_plot(imt[1], imi[1], imo[1])
+savefig("out1.png")
+out_plot(imt[2], imi[2], imo[2])
+savefig("out2.png")
+out_plot(imt[3], imi[3], imo[3])
+savefig("out3.png")
+out_plot(imt[4], imi[4], imo[4])
+savefig("out4.png")
+out_plot(imt[5], imi[5], imo[5])
+savefig("out5.png")
+pat_img(weight)
+savefig("weight.png")
+plot(tfs,xlabel="No. of patterns", ylabel="accuracy[%]",ylims=[0,100])
+savefig("out6.png")
+plot(noises,tfs2, label="two type memorized",xlabel="noise ratio", ylabel="accuracy[%]")
+plot!(noises,tfs4, label="four type memorized")
+savefig("out7.png")
+plot(noises,tfs2, label="2-true pattern",xlabel="noise ratio", ylabel="accuracy[%]")
+plot!(noises,tfs4, label="4-true pattern")
+plot!(noises,anti2, label="2-anti pattern")
+plot!(noises,anti4, label="4-anti pattern")
+savefig("out8.png")
