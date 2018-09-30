@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 # 知能機械情報学レポート課題１
+# 実行環境：Julia v0.6.2
 
 using Plots, RandomNumbers, StatsBase
 
